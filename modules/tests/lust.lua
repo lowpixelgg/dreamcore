@@ -1,27 +1,24 @@
-initLuaPackage()
+local lust = class:create ("lust");
 
--- lust v0.2.0 - Lua test framework
--- https://github.com/bjornbytes/lust
--- MIT LICENSE
+lust.level = 0;
+lust.passes = 0;
+lust.errors = 0;
+lust.befores = {};
+lust.afters = {};
 
-local lust = {}
-lust.level = 0
-lust.passes = 0
-lust.errors = 0
-lust.befores = {}
-lust.afters = {}
 
 local red = string.char(27) .. '[31m'
 local green = string.char(27) .. '[32m'
 local normal = string.char(27) .. '[0m'
+
 local function indent(level) return string.rep('\t', level or lust.level) end
 
-function lust.nocolor()
+function lust.private.nocolor()
   red, green, normal = '', '', ''
   return lust
 end
 
-function lust.describe(name, fn)
+function lust.public.describe(name, fn)
   print(indent() .. name)
   lust.level = lust.level + 1
   fn()
@@ -30,7 +27,7 @@ function lust.describe(name, fn)
   lust.level = lust.level - 1
 end
 
-function lust.it(name, fn)
+function lust.public.it(name, fn)
   for level = 1, lust.level do
     if lust.befores[level] then
       for i = 1, #lust.befores[level] do
@@ -44,6 +41,7 @@ function lust.it(name, fn)
   else lust.errors = lust.errors + 1 end
   local color = success and green or red
   local label = success and 'PASS' or 'FAIL'
+  
   print(indent() .. color .. label .. normal .. ' ' .. name)
   if err then
     print(indent(lust.level + 1) .. red .. tostring(err) .. normal)
@@ -58,12 +56,12 @@ function lust.it(name, fn)
   end
 end
 
-function lust.before(fn)
+function lust.public.before(fn)
   lust.befores[lust.level] = lust.befores[lust.level] or {}
   table.insert(lust.befores[lust.level], fn)
 end
 
-function lust.after(fn)
+function lust.public.after(fn)
   lust.afters[lust.level] = lust.afters[lust.level] or {}
   table.insert(lust.afters[lust.level], fn)
 end
@@ -179,7 +177,7 @@ local paths = {
   },
 }
 
-function lust.expect(v)
+function lust.public.expect(v)
   local assertion = {}
   assertion.val = v
   assertion.action = ''
@@ -212,7 +210,7 @@ function lust.expect(v)
   return assertion
 end
 
-function lust.spy(target, name, run)
+function lust.public.spy(target, name, run)
   local spy = {}
   local subject
 

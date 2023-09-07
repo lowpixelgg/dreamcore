@@ -1,0 +1,12 @@
+<meta>
+  <info author="rocketmta.com(flashii)" version="1.0" />
+
+
+  <!-- modules -->
+  <script src="modules/misc/namespacer.lua" type="shared" />
+  <script src="modules/tests/lust.lua" type="shared" />
+
+
+  <!-- specs -->
+  <script src="spec/namespacer.spec.lua" type="server" />
+</meta>
