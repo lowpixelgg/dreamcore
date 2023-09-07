@@ -1,17 +1,23 @@
 <meta>
   <info author="rocketmta.com(flashii)" version="1.0" />
-
+  <min_mta_version  server="1.5.2"/>
 
   <!-- modules -->
   <script src="modules/misc/namespacer.lua" type="shared" />
   <script src="modules/misc/string.lua" type="shared" />
   <script src="modules/misc/fs.lua" type="shared" />
+  <script src="modules/misc/env.lua" type="shared" />
+  <script src="modules/misc/orm/index.lua" type="server" />
+  <script src="modules/misc/orm/table.lua" type="server" />
+
   <script src="modules/tests/lust.lua" type="shared" />
+
 
   <!-- core -->
   <script src="core/bundler/index.lua" type="shared" />
   <script src="core/bundler/importer.lua" type="shared" />
   <script src="core/bundler/shared.lua" type="shared" />
+  
 
   <!-- specs -->
   <script src="spec/namespacer.spec.lua" type="server" />
