@@ -17,11 +17,13 @@
   <script src="core/bundler/index.lua" type="shared" />
   <script src="core/bundler/importer.lua" type="shared" />
   <script src="core/bundler/shared.lua" type="shared" />
-  
+
+
+  <script src="core/builder/main.lua" type="shared" />
 
   <!-- specs -->
   <script src="spec/namespacer.spec.lua" type="server" />
-
+  <script src="spec/env.spec.lua" type="server" />
 
 
   <export function="import" type="shared" http="false"/>

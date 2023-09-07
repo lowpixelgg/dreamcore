@@ -1,7 +1,7 @@
 local describe, it, expect = lust.describe, lust.it, lust.expect
 
 
-if (false) then 
+if (process.env.enableSuiteTests) then 
   describe("Namespacer Suite", function () 
     it("should be able to create a namespacer", function () 
       local namespace = class:create("test-namespace");

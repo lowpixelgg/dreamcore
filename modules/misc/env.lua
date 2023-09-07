@@ -1,7 +1,7 @@
 local env = class:create("env");
 
-function env.public.config()
-  local cFile = fileOpen(".env", true)
+function env.public.config(fn)
+  local cFile = fileOpen(fn and fn or ".env", true)
   if not cFile then return false end
   local size = fileGetSize(cFile)
   local data = fileRead(cFile, size)
@@ -13,6 +13,6 @@ function env.public.config()
   ]]
 
   loadstring(formatString)();
-  
+
   return true;
 end
