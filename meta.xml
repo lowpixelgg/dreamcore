@@ -4,9 +4,19 @@
 
   <!-- modules -->
   <script src="modules/misc/namespacer.lua" type="shared" />
+  <script src="modules/misc/string.lua" type="shared" />
+  <script src="modules/misc/fs.lua" type="shared" />
   <script src="modules/tests/lust.lua" type="shared" />
 
+  <!-- core -->
+  <script src="core/bundler/index.lua" type="shared" />
+  <script src="core/bundler/importer.lua" type="shared" />
+  <script src="core/bundler/shared.lua" type="shared" />
 
   <!-- specs -->
   <script src="spec/namespacer.spec.lua" type="server" />
+
+
+
+  <export function="import" type="shared" http="false"/>
 </meta>
