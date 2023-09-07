@@ -2,13 +2,20 @@
   <info author="rocketmta.com(flashii)" version="1.0" />
   <min_mta_version  server="1.5.2"/>
 
+  <settings>
+    <setting name="enviorement" value="development"/>
+  </settings>
+
   <!-- modules -->
   <script src="modules/misc/namespacer.lua" type="shared" />
   <script src="modules/misc/string.lua" type="shared" />
   <script src="modules/misc/fs.lua" type="shared" />
-  <script src="modules/misc/env.lua" type="shared" />
+  <script src="modules/misc/timer.lua" type="shared"/>
+  <script src="modules/misc/network.lua" type="shared" />
+  <script src="modules/misc/threader.lua" type="shared" />
   <script src="modules/misc/orm/index.lua" type="server" />
   <script src="modules/misc/orm/table.lua" type="server" />
+  <script src="modules/collections/lume.lua" type="shared" />
 
   <script src="modules/tests/lust.lua" type="shared" />
 
@@ -23,8 +30,7 @@
 
   <!-- specs -->
   <script src="spec/namespacer.spec.lua" type="server" />
-  <script src="spec/env.spec.lua" type="server" />
-
+  <script src="spec/lume.spec.lua" type="server" />
 
   <export function="import" type="shared" http="false"/>
 </meta>

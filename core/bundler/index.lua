@@ -9,8 +9,11 @@ bundler.private.utils = {
 bundler.private.modules = {
   ["namespace"] = {module = "namespacer", namespace = "dreamcore.namespace", path = "modules/misc/namespacer.lua", endpoints = {"namespace", "class"}},
   ["class"] = {namespace = "dreamcore.class"},
+  ["thread"] = {module = "threader", namespace = "dreamcore.thread", path = "modules/misc/threader.lua", endpoints = {"thread"}},
+  ["network"] = {module = "networker", namespace = "dreamcore.network", path = "modules/misc/network.lua", endpoints = {"network"}},
+  ["timer"] = {module = "timer", namespace = "dreamcore.timer", path = "modules/misc/timer.lua", endpoints = {"timer"}},
   ["file"] = {module = "filesystem", namespace = "dreamcore.file", path = "modules/misc/fs.lua", endpoints = {"file"}},
-  ["env"] = {module = "env", namespace = "dreamcore.env", path = "modules/misc/env.lua", endpoints = {"env"}},
+  ["lust"] = {module = "lust", namespace = "dreamcore.lust", path = "modules/tests/lust.lua", endpoints = {"lust"}},
 }
 
 

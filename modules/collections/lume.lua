@@ -1,13 +1,4 @@
---
--- lume
---
--- Copyright (c) 2017 rxi
---
--- This library is free software; you can redistribute it and/or modify it
--- under the terms of the MIT license. See LICENSE for details.
---
-
-local lume = { _version = "2.3.0" }
+local lume = class:create("lume");
 
 local pairs, ipairs = pairs, ipairs
 local type, assert, unpack = type, assert, unpack or table.unpack
@@ -40,7 +31,7 @@ local iscallable = function(x)
 end
 
 local getiter = function(x)
-  if lume.isarray(x) then
+  if lume.public.isarray(x) then
     return ipairs
   elseif type(x) == "table" then
     return pairs
@@ -64,40 +55,40 @@ end
 
 
 
-function lume.clamp(x, min, max)
+function lume.public.clamp(x, min, max)
   return x < min and min or (x > max and max or x)
 end
 
 
-function lume.round(x, increment)
-  if increment then return lume.round(x / increment) * increment end
+function lume.public.round(x, increment)
+  if increment then return lume.public.round(x / increment) * increment end
   return x >= 0 and math_floor(x + .5) or math_ceil(x - .5)
 end
 
 
-function lume.sign(x)
+function lume.public.sign(x)
   return x < 0 and -1 or 1
 end
 
 
-function lume.lerp(a, b, amount)
-  return a + (b - a) * lume.clamp(amount, 0, 1)
+function lume.public.lerp(a, b, amount)
+  return a + (b - a) * lume.public.clamp(amount, 0, 1)
 end
 
 
-function lume.smooth(a, b, amount)
-  local t = lume.clamp(amount, 0, 1)
+function lume.public.smooth(a, b, amount)
+  local t = lume.public.clamp(amount, 0, 1)
   local m = t * t * (3 - 2 * t)
   return a + (b - a) * m
 end
 
 
-function lume.pingpong(x)
+function lume.public.pingpong(x)
   return 1 - math_abs(1 - x % 2)
 end
 
 
-function lume.distance(x1, y1, x2, y2, squared)
+function lume.public.distance(x1, y1, x2, y2, squared)
   local dx = x1 - x2
   local dy = y1 - y2
   local s = dx * dx + dy * dy
@@ -105,36 +96,36 @@ function lume.distance(x1, y1, x2, y2, squared)
 end
 
 
-function lume.angle(x1, y1, x2, y2)
+function lume.public.angle(x1, y1, x2, y2)
   return math_atan2(y2 - y1, x2 - x1)
 end
 
 
-function lume.vector(angle, magnitude)
+function lume.public.vector(angle, magnitude)
   return math.cos(angle) * magnitude, math.sin(angle) * magnitude
 end
 
 
-function lume.random(a, b)
+function lume.public.random(a, b)
   if not a then a, b = 0, 1 end
   if not b then b = 0 end
   return a + math.random() * (b - a)
 end
 
 
-function lume.randomchoice(t)
+function lume.public.randomchoice(t)
   return t[math.random(#t)]
 end
 
 
-function lume.weightedchoice(t)
+function lume.public.weightedchoice(t)
   local sum = 0
   for _, v in pairs(t) do
     assert(v >= 0, "weight value less than zero")
     sum = sum + v
   end
   assert(sum ~= 0, "all weights are zero")
-  local rnd = lume.random(sum)
+  local rnd = lume.public.random(sum)
   for k, v in pairs(t) do
     if rnd < v then return k end
     rnd = rnd - v
@@ -142,12 +133,12 @@ function lume.weightedchoice(t)
 end
 
 
-function lume.isarray(x)
+function lume.public.isarray(x)
   return (type(x) == "table" and x[1] ~= nil) and true or false
 end
 
 
-function lume.push(t, ...)
+function lume.public.push(t, ...)
   local n = select("#", ...)
   for i = 1, n do
     t[#t + 1] = select(i, ...)
@@ -156,11 +147,11 @@ function lume.push(t, ...)
 end
 
 
-function lume.remove(t, x)
+function lume.public.remove(t, x)
   local iter = getiter(t)
   for i, v in iter(t) do
     if v == x then
-      if lume.isarray(t) then
+      if lume.public.isarray(t) then
         table.remove(t, i)
         break
       else
@@ -173,7 +164,7 @@ function lume.remove(t, x)
 end
 
 
-function lume.clear(t)
+function lume.public.clear(t)
   local iter = getiter(t)
   for k in iter(t) do
     t[k] = nil
@@ -182,7 +173,7 @@ function lume.clear(t)
 end
 
 
-function lume.extend(t, ...)
+function lume.public.extend(t, ...)
   for i = 1, select("#", ...) do
     local x = select(i, ...)
     if x then
@@ -195,7 +186,7 @@ function lume.extend(t, ...)
 end
 
 
-function lume.shuffle(t)
+function lume.public.shuffle(t)
   local rtn = {}
   for i = 1, #t do
     local r = math.random(i)
@@ -208,8 +199,8 @@ function lume.shuffle(t)
 end
 
 
-function lume.sort(t, comp)
-  local rtn = lume.clone(t)
+function lume.public.sort(t, comp)
+  local rtn = lume.public.clone(t)
   if comp then
     if type(comp) == "string" then
       table.sort(rtn, function(a, b) return a[comp] < b[comp] end)
@@ -223,14 +214,14 @@ function lume.sort(t, comp)
 end
 
 
-function lume.array(...)
+function lume.public.array(...)
   local t = {}
   for x in ... do t[#t + 1] = x end
   return t
 end
 
 
-function lume.each(t, fn, ...)
+function lume.public.each(t, fn, ...)
   local iter = getiter(t)
   if type(fn) == "string" then
     for _, v in iter(t) do v[fn](v, ...) end
@@ -241,7 +232,7 @@ function lume.each(t, fn, ...)
 end
 
 
-function lume.map(t, fn)
+function lume.public.map(t, fn)
   fn = iteratee(fn)
   local iter = getiter(t)
   local rtn = {}
@@ -250,7 +241,7 @@ function lume.map(t, fn)
 end
 
 
-function lume.all(t, fn)
+function lume.public.all(t, fn)
   fn = iteratee(fn)
   local iter = getiter(t)
   for _, v in iter(t) do
@@ -260,7 +251,7 @@ function lume.all(t, fn)
 end
 
 
-function lume.any(t, fn)
+function lume.public.any(t, fn)
   fn = iteratee(fn)
   local iter = getiter(t)
   for _, v in iter(t) do
@@ -270,7 +261,7 @@ function lume.any(t, fn)
 end
 
 
-function lume.reduce(t, fn, first)
+function lume.public.reduce(t, fn, first)
   local acc = first
   local started = first and true or false
   local iter = getiter(t)
@@ -287,16 +278,16 @@ function lume.reduce(t, fn, first)
 end
 
 
-function lume.set(t)
+function lume.public.set(t)
   local rtn = {}
-  for k in pairs(lume.invert(t)) do
+  for k in pairs(lume.public.invert(t)) do
     rtn[#rtn + 1] = k
   end
   return rtn
 end
 
 
-function lume.filter(t, fn, retainkeys)
+function lume.public.filter(t, fn, retainkeys)
   fn = iteratee(fn)
   local iter = getiter(t)
   local rtn = {}
@@ -313,7 +304,7 @@ function lume.filter(t, fn, retainkeys)
 end
 
 
-function lume.reject(t, fn, retainkeys)
+function lume.public.reject(t, fn, retainkeys)
   fn = iteratee(fn)
   local iter = getiter(t)
   local rtn = {}
@@ -330,7 +321,7 @@ function lume.reject(t, fn, retainkeys)
 end
 
 
-function lume.merge(...)
+function lume.public.merge(...)
   local rtn = {}
   for i = 1, select("#", ...) do
     local t = select(i, ...)
@@ -343,7 +334,7 @@ function lume.merge(...)
 end
 
 
-function lume.concat(...)
+function lume.public.concat(...)
   local rtn = {}
   for i = 1, select("#", ...) do
     local t = select(i, ...)
@@ -358,7 +349,7 @@ function lume.concat(...)
 end
 
 
-function lume.find(t, value)
+function lume.public.find(t, value)
   local iter = getiter(t)
   for k, v in iter(t) do
     if v == value then return k end
@@ -367,7 +358,7 @@ function lume.find(t, value)
 end
 
 
-function lume.match(t, fn)
+function lume.public.match(t, fn)
   fn = iteratee(fn)
   local iter = getiter(t)
   for k, v in iter(t) do
@@ -377,7 +368,7 @@ function lume.match(t, fn)
 end
 
 
-function lume.count(t, fn)
+function lume.public.count(t, fn)
   local count = 0
   local iter = getiter(t)
   if fn then
@@ -386,7 +377,7 @@ function lume.count(t, fn)
       if fn(v) then count = count + 1 end
     end
   else
-    if lume.isarray(t) then
+    if lume.public.isarray(t) then
       return #t
     end
     for _ in iter(t) do count = count + 1 end
@@ -395,7 +386,7 @@ function lume.count(t, fn)
 end
 
 
-function lume.slice(t, i, j)
+function lume.public.slice(t, i, j)
   i = i and absindex(#t, i) or 1
   j = j and absindex(#t, j) or #t
   local rtn = {}
@@ -406,26 +397,26 @@ function lume.slice(t, i, j)
 end
 
 
-function lume.first(t, n)
+function lume.public.first(t, n)
   if not n then return t[1] end
-  return lume.slice(t, 1, n)
+  return lume.public.slice(t, 1, n)
 end
 
 
-function lume.last(t, n)
+function lume.public.last(t, n)
   if not n then return t[#t] end
-  return lume.slice(t, -n, -1)
+  return lume.public.slice(t, -n, -1)
 end
 
 
-function lume.invert(t)
+function lume.public.invert(t)
   local rtn = {}
   for k, v in pairs(t) do rtn[v] = k end
   return rtn
 end
 
 
-function lume.pick(t, ...)
+function lume.public.pick(t, ...)
   local rtn = {}
   for i = 1, select("#", ...) do
     local k = select(i, ...)
@@ -435,7 +426,7 @@ function lume.pick(t, ...)
 end
 
 
-function lume.keys(t)
+function lume.public.keys(t)
   local rtn = {}
   local iter = getiter(t)
   for k in iter(t) do rtn[#rtn + 1] = k end
@@ -443,25 +434,25 @@ function lume.keys(t)
 end
 
 
-function lume.clone(t)
+function lume.public.clone(t)
   local rtn = {}
   for k, v in pairs(t) do rtn[k] = v end
   return rtn
 end
 
 
-function lume.fn(fn, ...)
+function lume.public.fn(fn, ...)
   assert(iscallable(fn), "expected a function as the first argument")
   local args = { ... }
   return function(...)
-    local a = lume.concat(args, { ... })
+    local a = lume.public.concat(args, { ... })
     return fn(unpack(a))
   end
 end
 
 
-function lume.once(fn, ...)
-  local f = lume.fn(fn, ...)
+function lume.public.once(fn, ...)
+  local f = lume.public.fn(fn, ...)
   local done = false
   return function(...)
     if done then return end
@@ -474,7 +465,7 @@ end
 local memoize_fnkey = {}
 local memoize_nil = {}
 
-function lume.memoize(fn)
+function lume.public.memoize(fn)
   local cache = {}
   return function(...)
     local c = cache
@@ -489,7 +480,7 @@ function lume.memoize(fn)
 end
 
 
-function lume.combine(...)
+function lume.public.combine(...)
   local n = select('#', ...)
   if n == 0 then return noop end
   if n == 1 then
@@ -512,14 +503,14 @@ function lume.combine(...)
 end
 
 
-function lume.call(fn, ...)
+function lume.public.call(fn, ...)
   if fn then
     return fn(...)
   end
 end
 
 
-function lume.time(fn, ...)
+function lume.public.time(fn, ...)
   local start = os.clock()
   local rtn = {fn(...)}
   return (os.clock() - start), unpack(rtn)
@@ -528,12 +519,12 @@ end
 
 local lambda_cache = {}
 
-function lume.lambda(str)
+function lume.public.lambda(str)
   if not lambda_cache[str] then
     local args, body = str:match([[^([%w,_ ]-)%->(.-)$]])
     assert(args and body, "bad string lambda")
     local s = "return function(" .. args .. ")\nreturn " .. body .. "\nend"
-    lambda_cache[str] = lume.dostring(s)
+    lambda_cache[str] = lume.public.dostring(s)
   end
   return lambda_cache[str]
 end
@@ -572,35 +563,35 @@ serialize = function(x, stk)
   return serialize_map[type(x)](x, stk)
 end
 
-function lume.serialize(x)
+function lume.public.serialize(x)
   return serialize(x)
 end
 
 
-function lume.deserialize(str)
-  return lume.dostring("return " .. str)
+function lume.public.deserialize(str)
+  return lume.public.dostring("return " .. str)
 end
 
 
-function lume.split(str, sep)
+function lume.public.split(str, sep)
   if not sep then
-    return lume.array(str:gmatch("([%S]+)"))
+    return lume.public.array(str:gmatch("([%S]+)"))
   else
     assert(sep ~= "", "empty separator")
     local psep = patternescape(sep)
-    return lume.array((str..sep):gmatch("(.-)("..psep..")"))
+    return lume.public.array((str..sep):gmatch("(.-)("..psep..")"))
   end
 end
 
 
-function lume.trim(str, chars)
+function lume.public.trim(str, chars)
   if not chars then return str:match("^[%s]*(.-)[%s]*$") end
   chars = patternescape(chars)
   return str:match("^[" .. chars .. "]*(.-)[" .. chars .. "]*$")
 end
 
 
-function lume.wordwrap(str, limit)
+function lume.public.wordwrap(str, limit)
   limit = limit or 72
   local check
   if type(limit) == "number" then
@@ -632,7 +623,7 @@ function lume.wordwrap(str, limit)
 end
 
 
-function lume.format(str, vars)
+function lume.public.format(str, vars)
   if not vars then return str end
   local f = function(x)
     return tostring(vars[x] or vars[tonumber(x)] or "{" .. x .. "}")
@@ -641,13 +632,13 @@ function lume.format(str, vars)
 end
 
 
-function lume.trace(...)
+function lume.public.trace(...)
   local info = debug.getinfo(2, "Sl")
   local t = { info.short_src .. ":" .. info.currentline .. ":" }
   for i = 1, select("#", ...) do
     local x = select(i, ...)
     if type(x) == "number" then
-      x = string.format("%g", lume.round(x, .01))
+      x = string.format("%g", lume.public.round(x, .01))
     end
     t[#t + 1] = tostring(x)
   end
@@ -655,12 +646,12 @@ function lume.trace(...)
 end
 
 
-function lume.dostring(str)
+function lume.public.dostring(str)
   return assert((loadstring or load)(str))()
 end
 
 
-function lume.uuid()
+function lume.public.uuid()
   local fn = function(x)
     local r = math.random(16) - 1
     r = (x == "x") and (r + 1) or (r % 4) + 9
@@ -670,8 +661,8 @@ function lume.uuid()
 end
 
 
-function lume.hotswap(modname)
-  local oldglobal = lume.clone(_G)
+function lume.public.hotswap(modname)
+  local oldglobal = lume.public.clone(_G)
   local updated = {}
   local function update(old, new)
     if updated[old] then return end
@@ -685,7 +676,7 @@ function lume.hotswap(modname)
   local err = nil
   local function onerror(e)
     for k in pairs(_G) do _G[k] = oldglobal[k] end
-    err = lume.trim(e)
+    err = lume.public.trim(e)
   end
   local ok, oldmod = pcall(require, modname)
   oldmod = ok and oldmod or nil
@@ -712,12 +703,12 @@ local ripairs_iter = function(t, i)
   if v then return i, v end
 end
 
-function lume.ripairs(t)
+function lume.public.ripairs(t)
   return ripairs_iter, t, (#t + 1)
 end
 
 
-function lume.color(str, mul)
+function lume.public.color(str, mul)
   mul = mul or 1
   local r, g, b, a
   r, g, b = str:match("#(%x%x)(%x%x)(%x%x)")
@@ -739,7 +730,7 @@ function lume.color(str, mul)
 end
 
 
-function lume.rgba(color)
+function lume.public.rgba(color)
   local a = math_floor((color / 16777216) % 256)
   local r = math_floor((color /    65536) % 256)
   local g = math_floor((color /      256) % 256)
@@ -749,7 +740,7 @@ end
 
 
 local chain_mt = {}
-chain_mt.__index = lume.map(lume.filter(lume, iscallable, true),
+chain_mt.__index = lume.public.map(lume.public.filter(lume, iscallable, true),
   function(fn)
     return function(self, ...)
       self._value = fn(self._value, ...)
@@ -758,13 +749,13 @@ chain_mt.__index = lume.map(lume.filter(lume, iscallable, true),
   end)
 chain_mt.__index.result = function(x) return x._value end
 
-function lume.chain(value)
+function lume.public.chain(value)
   return setmetatable({ _value = value }, chain_mt)
 end
 
 setmetatable(lume,  {
   __call = function(_, ...)
-    return lume.chain(...)
+    return lume.public.chain(...)
   end
 })
 
