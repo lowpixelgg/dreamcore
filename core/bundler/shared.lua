@@ -17,8 +17,8 @@ bundler.private:createBuffer("imports", _, [[
             loadstring = loadstring,
             getThisResource = getThisResource,
             getResourceFromName = getResourceFromName,
-            table = table,
-            string = string
+            string = string,
+            table = table
         }
     end
 ]])

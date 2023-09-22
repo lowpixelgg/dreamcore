@@ -1,9 +1,24 @@
-local dbTable = class:create("ormTable", {
+local imports = {
+  dbPrepareString = dbPrepareString,
+  dbConnect = dbConnect,
+  dbExec = dbExec,
+  type = type,
+  dbQuery = dbQuery,
+  isElement = isElement,
+  tonumber = tonumber,
+  unpack = unpack,
+  dbPoll = dbPoll,
+  pairs = pairs,
+  pcall = pcall,
+  tostring = tostring
+}
+
+local dbTable = class:create("dbTable", {
   connection = nil,
   workingTable = nil,
   ID_COLUMN_NAME = "_id",
   ID_COLUMN_TYPE = "int",
-}, _, "orm")
+}, _, "database")
 
 function dbTable.public:new(...)
   local instance = self:createInstance()
@@ -17,7 +32,7 @@ function dbTable.public:new(...)
 end
 
 function dbTable.public:load(conn, tableName)
-  if not isElement(conn) or type(tableName) ~= "string" then return false end
+  if not imports.isElement(conn) or imports.type(tableName) ~= "string" then return false end
   dbTable.public.workingTable = tableName
   dbTable.public.connection = conn
 
@@ -26,8 +41,8 @@ end
 
 
 function dbTable.public:create (columns, options)
-  if type(columns) ~= "table" then return false end
-  if type(options) ~= "string" then
+  if imports.type(columns) ~= "table" then return false end
+  if imports.type(options) ~= "string" then
     options = ""
   else
     options = ", "..options
@@ -44,13 +59,13 @@ function dbTable.public:create (columns, options)
   local columnsQueries = {}
 
   for i,column in ipairs(columns) do
-    local columnQuery = dbPrepareString(dbTable.public.connection, "`??` ??", column.name, column.type)
+    local columnQuery = imports.dbPrepareString(dbTable.public.connection, "`??` ??", column.name, column.type)
 
-    if column.size and tonumber(column.size) then
-      columnQuery = columnQuery .. dbPrepareString(dbTable.public.connection, "(??)", column.size)
+    if column.size and imports.tonumber(column.size) then
+      columnQuery = columnQuery .. imports.dbPrepareString(dbTable.public.connection, "(??)", column.size)
     end
 
-    if not column.options or type(column.options) ~= "string" then
+    if not column.options or imports.type(column.options) ~= "string" then
       column.options = ""
     end
 
@@ -61,14 +76,14 @@ function dbTable.public:create (columns, options)
     table.insert(columnsQueries, columnQuery)
   end
 
-  local queryString = dbPrepareString(dbTable.public.connection, "CREATE TABLE IF NOT EXISTS `??` (" .. table.concat(columnsQueries, ", ") .. " " .. options .. ");", dbTable.public.workingTable )
+  local queryString = imports.dbPrepareString(dbTable.public.connection, "CREATE TABLE IF NOT EXISTS `??` (" .. table.concat(columnsQueries, ", ") .. " " .. options .. ");", dbTable.public.workingTable )
 
-  return dbExec(dbTable.public.connection, queryString)
+  return imports.dbExec(dbTable.public.connection, queryString)
 end
 
 
 function dbTable.public:insert(values, callback, ...)
-  if type(values) ~= "table" or not next(values) then return false end
+  if imports.type(values) ~= "table" or not next(values) then return false end
 
 
   if not dbTable.public.connection then return false end
@@ -77,9 +92,9 @@ function dbTable.public:insert(values, callback, ...)
   local valuesQueries = {}
   local valuesCount = 0
 
-  for column, value in pairs(values) do
-    table.insert(columnsQueries, dbPrepareString(dbTable.public.connection, "`??`", column))
-    table.insert(valuesQueries, dbPrepareString(dbTable.public.connection, "?", value))
+  for column, value in imports.pairs(values) do
+    table.insert(columnsQueries, imports.dbPrepareString(dbTable.public.connection, "`??`", column))
+    table.insert(valuesQueries, imports.dbPrepareString(dbTable.public.connection, "?", value))
     valuesCount = valuesCount + 1
   end
 
@@ -87,16 +102,16 @@ function dbTable.public:insert(values, callback, ...)
     return dbTable.private:retrieveQueryResults(dbTable.public.connection, dbPrepareString(dbTable.public.connection, "INSERT INTO `??`;", dbTable.public.workingTable), callback, ...)
   end
 
-  local columnsQuery = dbPrepareString(dbTable.public.connection, "(" .. table.concat(columnsQueries, ",") .. ")")
-  local valuesQuery = dbPrepareString(dbTable.public.connection, "(" .. table.concat(valuesQueries, ",") .. ")")
-  local queryString = dbPrepareString(dbTable.public.connection, "INSERT INTO `??` " .. columnsQuery .. " VALUES " .. valuesQuery .. ";", dbTable.public.workingTable)
+  local columnsQuery = imports.dbPrepareString(dbTable.public.connection, "(" .. table.concat(columnsQueries, ",") .. ")")
+  local valuesQuery = imports.dbPrepareString(dbTable.public.connection, "(" .. table.concat(valuesQueries, ",") .. ")")
+  local queryString = imports.dbPrepareString(dbTable.public.connection, "INSERT INTO `??` " .. columnsQuery .. " VALUES " .. valuesQuery .. ";", dbTable.public.workingTable)
 
   return dbTable.private:retrieveQueryResults(dbTable.public.connection, queryString, callback, ...)
 end
 
 
 function dbTable.public:update(setFields, whereFields, callback, ...)
-  if not next(setFields) or type(whereFields) ~= "table" then return false end
+  if not next(setFields) or imports.type(whereFields) ~= "table" then return false end
   if not dbTable.public.connection then return false end
 
 
@@ -104,9 +119,9 @@ function dbTable.public:update(setFields, whereFields, callback, ...)
 
   for column, value in pairs(setFields) do
 		if value == "NULL" then
-			table.insert(setQueries, dbPrepareString(dbTable.public.connection, "`??`=NULL", column))
+			table.insert(setQueries, imports.dbPrepareString(dbTable.public.connection, "`??`=NULL", column))
 		else
-			table.insert(setQueries, dbPrepareString(dbTable.public.connection, "`??`=?", column, value))
+			table.insert(setQueries, imports.dbPrepareString(dbTable.public.connection, "`??`=?", column, value))
 		end
 	end
 
@@ -117,13 +132,13 @@ function dbTable.public:update(setFields, whereFields, callback, ...)
 	end
 
   for column, value in pairs(whereFields) do
-		table.insert(whereQueries, dbPrepareString(dbTable.public.connection, "`??`=?", column, value))
+		table.insert(whereQueries, imports.dbPrepareString(dbTable.public.connection, "`??`=?", column, value))
 	end
 
-  local queryString = dbPrepareString(dbTable.public.connection, "UPDATE `??` SET " .. table.concat(setQueries, ", "), dbTable.public.workingTable)
+  local queryString = imports.dbPrepareString(dbTable.public.connection, "UPDATE `??` SET " .. table.concat(setQueries, ", "), dbTable.public.workingTable)
 
   if #whereQueries > 0 then
-		queryString = queryString .. dbPrepareString(dbTable.public.connection, " WHERE " .. table.concat(whereQueries, " AND "))
+		queryString = queryString .. imports.dbPrepareString(dbTable.public.connection, " WHERE " .. table.concat(whereQueries, " AND "))
 	end
 	queryString = queryString .. ";"
 
@@ -133,7 +148,7 @@ end
 
 
 function dbTable.public:select(columns, whereFields, callback, ...)
-  if type(columns) ~= "table" then return false end
+  if imports.type(columns) ~= "table" then return false end
   if not dbTable.public.connection then return false end
 
   local whereQueries = {}
@@ -141,7 +156,7 @@ function dbTable.public:select(columns, whereFields, callback, ...)
 		whereFields = {}
 	end
 	for column, value in pairs(whereFields) do
-		table.insert(whereQueries, dbPrepareString(dbTable.public.connection, "`??`=?", column, value))
+		table.insert(whereQueries, imports.dbPrepareString(dbTable.public.connection, "`??`=?", column, value))
 	end
 	local whereQueryString = ""
 	if #whereQueries > 0 then
@@ -151,16 +166,16 @@ function dbTable.public:select(columns, whereFields, callback, ...)
 	-- COLUMNS
 	-- SELECT *
 	if not columns or type(columns) ~= "table" or #columns == 0 then
-    return dbTable.private:retrieveQueryResults(dbTable.public.connection, dbPrepareString("SELECT * FROM `??` " .. whereQueryString ..";", dbTable.public.workingTable), callback, ...)
+    return dbTable.private:retrieveQueryResults(dbTable.public.connection, imports.dbPrepareString("SELECT * FROM `??` " .. whereQueryString ..";", dbTable.public.workingTable), callback, ...)
 	end
 	local selectColumns = {}
 	for i, name in ipairs(columns) do
-		table.insert(selectColumns, dbPrepareString(dbTable.public.connection, "`??`", name))
+		table.insert(selectColumns, imports.dbPrepareString(dbTable.public.connection, "`??`", name))
 	end
 
 
 	-- SELECT COLUMNS
-	local queryString = dbPrepareString(dbTable.public.connection,
+	local queryString = imports.dbPrepareString(dbTable.public.connection,
   "SELECT " .. table.concat(selectColumns, ",") .." FROM `??` " .. whereQueryString ..";",
   dbTable.public.workingTable
 	)
@@ -177,7 +192,7 @@ function dbTable.public:delete(whereFields, callback, ...)
 	end
   
   for column, value in pairs(whereFields) do 
-    table.insert(whereQueries, dbPrepareString(dbTable.public.connection, "`??`=?", column, value))
+    table.insert(whereQueries, imports.dbPrepareString(dbTable.public.connection, "`??`=?", column, value))
   end
 
   local whereQueryString = ""
@@ -186,7 +201,7 @@ function dbTable.public:delete(whereFields, callback, ...)
     whereQueryString = " WHERE " .. table.concat(whereQueries, " AND ")
   end
 
-  local queryString = dbPrepareString(dbTable.public.connection,
+  local queryString = imports.dbPrepareString(dbTable.public.connection,
     "DELETE FROM `??` " .. whereQueryString ..";",
     dbTable.public.workingTable
   )
@@ -197,22 +212,22 @@ end
 
 
 function dbTable.private:retrieveQueryResults(connection, queryString, callback, ...)
-  if not isElement(connection) then
+  if not imports.isElement(connection) then
     return false
   end
-  if type(queryString) ~= "string" then
+  if imports.type(queryString) ~= "string" then
     return false
   end
-  if type(callback) ~= "function" then
-    local handle = dbQuery(connection, queryString)
-    return dbPoll(handle, -1)
+  if imports.type(callback) ~= "function" then
+    local handle = imports.dbQuery(connection, queryString)
+    return imports.dbPoll(handle, -1)
   else
-    return not not dbQuery(function (queryHandle, args)
-      local result = dbPoll(queryHandle, 0)
-      if type(args) ~= "table" then
+    return not not imports.dbQuery(function (queryHandle, args)
+      local result = imports.dbPoll(queryHandle, 0)
+      if imports.type(args) ~= "table" then
         args = {}
       end
-      dbTable.private:executeCallback(callback, result, unpack(args))
+      dbTable.private:executeCallback(callback, result, imports.unpack(args))
 
     end, connection, queryString)
   end
@@ -222,10 +237,10 @@ end
 
 
 function dbTable.private:executeCallback(callback, ...)
-  if type(callback) ~= "function" then
+  if imports.type(callback) ~= "function" then
     return false
   end
-  local success, err = pcall(callback, ...)
+  local success, err = imports.pcall(callback, ...)
   if not success then
     return false
   end

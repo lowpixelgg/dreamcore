@@ -201,13 +201,13 @@ function thread.public:await(cPromise)
           timer:create(function()
               local exception = thread.private.exceptions[self]
               self:destroy()
-              exception.promise.reject(table.unpack(resolvedValues))
-              exception.handles.catch(table.unpack(resolvedValues))
+              exception.promise.reject(unpack(resolvedValues))
+              exception.handles.catch(unpack(resolvedValues))
           end, 1, 1)
           thread.public:pause()
       end
       return
-  else return table.unpack(resolvedValues) end
+  else return unpack(resolvedValues) end
 end
 
 function thread.private.resolve(cThread, isResolved, ...)
@@ -216,7 +216,7 @@ function thread.private.resolve(cThread, isResolved, ...)
   timer:create(function(...)
       cThread.isAwaiting, cThread.awaitingPromise = nil, nil
       cThread.isErrored = not isResolved
-      cThread.resolvedValues = table.pack(...)
+      cThread.resolvedValues = {...}
       thread.private.resume(cThread)
   end, 1, 1, ...)
   return true
@@ -235,13 +235,13 @@ function thread.public:try(handles)
       handles = handles
   }
   cException = thread.public:create(function(self)
-      resolvedValues = table.pack(exceptionBuffer.handles.exec(self))
+      resolvedValues = {exceptionBuffer.handles.exec(self)}
       exceptionBuffer.promise.resolve()
   end)
   thread.private.exceptions[cException] = exceptionBuffer
   cException:resume()
   self:await(exceptionBuffer.promise)
-  return table.unpack(resolvedValues)
+  return unpack(resolvedValues)
 end
 
 function async(...) return thread.public:create(...) end

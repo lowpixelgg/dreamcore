@@ -4,16 +4,22 @@ bundler.private.buffer = {}
 bundler.private.platform = (localPlayer and "client") or "server"
 bundler.private.utils = {
   "modules/misc/string.lua",
+  "modules/misc/timer.lua",
+  "modules/misc/index.lua",
+  "modules/misc/table.lua",
+  "modules/misc/orm/table.lua",
 }
 
 bundler.private.modules = {
   ["namespace"] = {module = "namespacer", namespace = "dreamcore.namespace", path = "modules/misc/namespacer.lua", endpoints = {"namespace", "class"}},
   ["class"] = {namespace = "dreamcore.class"},
+--   ["timer"] = {module = "timer", namespace = "dreamcore.timer", path = "modules/misc/timer.lua", endpoints = {"timer"}},
   ["thread"] = {module = "threader", namespace = "dreamcore.thread", path = "modules/misc/threader.lua", endpoints = {"thread"}},
   ["network"] = {module = "networker", namespace = "dreamcore.network", path = "modules/misc/network.lua", endpoints = {"network"}},
-  ["timer"] = {module = "timer", namespace = "dreamcore.timer", path = "modules/misc/timer.lua", endpoints = {"timer"}},
   ["file"] = {module = "filesystem", namespace = "dreamcore.file", path = "modules/misc/fs.lua", endpoints = {"file"}},
   ["lust"] = {module = "lust", namespace = "dreamcore.lust", path = "modules/tests/lust.lua", endpoints = {"lust"}},
+  ["database"] = {module = "dbfy", namespace = "dreamcore.database", path = "modules/misc/orm/index.lua", endpoints = {"database"}},
+  ["cron"] = {module = "cron", namespace = "dreamcore.cron", path = "modules/misc/cron.lua", endpoints = {"cron"}},
 }
 
 
@@ -22,6 +28,8 @@ function bundler.private:createUtils()
       local rw = ""
       for i = 1, #bundler.private.utils, 1 do
           local j = file:read(bundler.private.utils[i])
+          if (j) then
+
           for k, v in pairs(bundler.private.modules) do
               j = string.gsub(j, k, v.namespace, _, true, "(", ".:)")
           end
@@ -31,6 +39,7 @@ function bundler.private:createUtils()
           end
           ]]
       end
+    end
       bundler.private.utils = rw
   end
   return bundler.private.utils
@@ -50,6 +59,9 @@ function bundler.private:createModule(name)
   if not module then return false end
   if not bundler.private.buffer[(module.module)] then
       local rw = file:read(module.path)
+
+      if (not rw) then return false end
+
       for i, j in pairs(bundler.private.modules) do
           local isBlacklisted = false
           for k = 1, #module.endpoints, 1 do
@@ -64,7 +76,7 @@ function bundler.private:createModule(name)
       rw = ((name == "namespace") and string.gsub(rw, "class = {}", "local class = {}")) or rw
 
       for i = 1, #module.endpoints, 1 do
-          local j = module.endpoints[i]
+        local j = module.endpoints[i]
           rw = rw..[[
           dreamcore["]]..j..[["] = ]]..j..((bundler.private.modules[j] and bundler.private.modules[j].module and ".public") or "")..[[
           _G["]]..j..[["] = nil

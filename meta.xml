@@ -3,16 +3,19 @@
   <min_mta_version  server="1.5.2"/>
 
   <settings>
-    <setting name="enviorement" value="development"/>
+    <setting name="enviorement" value="production"/>
   </settings>
 
   <!-- modules -->
+  <script src="modules/misc/index.lua" type="shared" />
   <script src="modules/misc/namespacer.lua" type="shared" />
   <script src="modules/misc/string.lua" type="shared" />
   <script src="modules/misc/fs.lua" type="shared" />
+  <script src="modules/misc/table.lua" type="shared" />
   <script src="modules/misc/timer.lua" type="shared"/>
   <script src="modules/misc/network.lua" type="shared" />
   <script src="modules/misc/threader.lua" type="shared" />
+  <script src="modules/misc/cron.lua" type="shared" />
   <script src="modules/misc/orm/index.lua" type="server" />
   <script src="modules/misc/orm/table.lua" type="server" />
   <script src="modules/collections/lume.lua" type="shared" />

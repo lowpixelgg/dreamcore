@@ -8,13 +8,16 @@ network.private.cache = {
   execSerials = {}
 }
 
+triggerRemoteEvent = (localPlayer and triggerServerEvent) or triggerClientEvent
+triggerRemoteLatentEvent = (localPlayer and triggerLatentServerEvent) or triggerLatentClientEvent
+
 addEvent("dreamcore:Networker:API", true)
 addEventHandler("dreamcore:Networker:API", root, function(serial, payload)
   if not serial or not payload or not payload.processType or (payload.isRestricted and (serial ~= network.public.identifier)) then return false end
   if payload.processType == "emit" then
       local cNetwork = network.public:fetch(payload.networkName)
       if cNetwork and not cNetwork.isCallback then
-          for i = 1, table.length(cNetwork.priority.index), 1 do
+          for i = 1, #cNetwork.priority.index, 1 do
               local j = cNetwork.priority.index[i]
               if not cNetwork.priority.handlers[j].config.isAsync then
                   network.private.execNetwork(cNetwork, j, _, serial, payload)
@@ -44,7 +47,7 @@ addEventHandler("dreamcore:Networker:API", root, function(serial, payload)
           end
       else
           if network.private.cache.execSerials[(payload.execSerial)] then
-              network.private.cache.execSerials[(payload.execSerial)](table.unpack(payload.processArgs))
+              network.private.cache.execSerials[(payload.execSerial)](unpack(payload.processArgs))
               network.private.deserializeExec(payload.execSerial)
           end
       end
@@ -63,9 +66,9 @@ end
 function network.private.execNetwork(cNetwork, exec, cThread, serial, payload)
   if not cNetwork.isCallback then
       if cThread then
-          exec(cThread, table.unpack(payload.processArgs))
+          exec(cThread, unpack(payload.processArgs))
       else
-          exec(table.unpack(payload.processArgs))
+          exec(unpack(payload.processArgs))
       end
       local execData = cNetwork.priority.handlers[exec] or cNetwork.handlers[exec]
       execData.config.subscriptionCount = (execData.config.subscriptionLimit and (execData.config.subscriptionCount + 1)) or false
@@ -74,9 +77,9 @@ function network.private.execNetwork(cNetwork, exec, cThread, serial, payload)
       end
   else
       if cThread then
-          payload.processArgs = table.pack(exec(cThread, table.unpack(payload.processArgs)))
+          payload.processArgs = { exec(cThread, unpack(payload.processArgs)) }
       else
-          payload.processArgs = table.pack(exec(table.unpack(payload.processArgs)))
+          payload.processArgs = { exec(unpack(payload.processArgs)) }
       end
       if not payload.isRemote then
           triggerEvent("dreamcore:Networker:API", resourceRoot, serial, payload)
@@ -170,7 +173,7 @@ function network.public:on(exec, config)
   else
       if not self.priority.handlers[exec] and not self.handlers[exec] then
           if config.isPrioritized then
-              self.priority.handlers[exec] = {index = table.length(self.priority.index) + 1, config = config}
+              self.priority.handlers[exec] = {index = #self.priority.index + 1, config = config}
               table.insert(self.priority.index, exec)
           else self.handlers[exec] = {config = config} end
           return true
@@ -190,7 +193,7 @@ function network.public:off(exec)
   else
       if self.priority.handlers[exec] or self.handlers[exec] then
           if self.priority.handlers[exec] then
-              for i = self.priority.handlers[exec].index + 1, table.length(self.priority.index), 1 do
+              for i = self.priority.handlers[exec].index + 1, #self.priority.index, 1 do
                   local j = self.priority.index[i]
                   self.priority.handlers[j].index = index - 1
               end
@@ -205,7 +208,7 @@ end
 
 function network.public:emit(...)
   if not self then return false end
-  local cArgs = table.pack(...)
+  local cArgs = { ... }
   local payload = {
       isRemote = false,
       isRestricted = false,
@@ -249,7 +252,7 @@ end
 function network.public:emitCallback(...)
   if not self or not thread:getThread() then return false end
   local cPromise = thread:createPromise()
-  local cArgs, cExec = table.pack(...), cPromise.resolve
+  local cArgs, cExec = {...}, cPromise.resolve
   local payload = {
       isRemote = false,
       isRestricted = false,
