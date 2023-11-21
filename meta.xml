@@ -1,39 +1,16 @@
 <meta>
-  <info author="rocketmta.com(flashii)" version="1.0" />
-  <min_mta_version  server="1.5.2"/>
-
-  <settings>
-    <setting name="enviorement" value="production"/>
-  </settings>
-
-  <!-- modules -->
-  <script src="modules/misc/index.lua" type="shared" />
-  <script src="modules/misc/namespacer.lua" type="shared" />
-  <script src="modules/misc/string.lua" type="shared" />
-  <script src="modules/misc/fs.lua" type="shared" />
-  <script src="modules/misc/table.lua" type="shared" />
-  <script src="modules/misc/timer.lua" type="shared"/>
-  <script src="modules/misc/network.lua" type="shared" />
-  <script src="modules/misc/threader.lua" type="shared" />
-  <script src="modules/misc/cron.lua" type="shared" />
-  <script src="modules/misc/orm/index.lua" type="server" />
-  <script src="modules/misc/orm/table.lua" type="server" />
-  <script src="modules/collections/lume.lua" type="shared" />
-
-  <script src="modules/tests/lust.lua" type="shared" />
+    <info author="Vítor Ribeiro (flashii)" version="1.0.0" name="dreamcore" description="A LowPixel Roleplay Gamemode" type="gamemode"/>
 
 
-  <!-- core -->
-  <script src="core/bundler/index.lua" type="shared" />
-  <script src="core/bundler/importer.lua" type="shared" />
-  <script src="core/bundler/shared.lua" type="shared" />
-
-
-  <script src="core/builder/main.lua" type="shared" />
-
-  <!-- specs -->
-  <script src="spec/namespacer.spec.lua" type="server" />
-  <script src="spec/lume.spec.lua" type="server" />
-
-  <export function="import" type="shared" http="false"/>
+    <!-- Shared/sdk -->
+    <script src="Shared/sdk/index.lua" type="shared" cache="false" />
+    <script src="Shared/sdk/namespacer.lua" type="shared" cache="false" />
+    <script src="Shared/sdk/file.lua" type="shared" cache="false" />
+    <script src="Shared/sdk/string.lua" type="shared" cache="false" />
+    <script src="Shared/sdk/table.lua" type="shared" cache="false" />
+    <script src="Shared/sdk/timer.lua" type="shared" cache="false" />
+    
+    <!-- vendor -->
+    <script src="vendor/shared/lume/lume.lua" type="shared" cache="false" />
+    <script src="vendor/shared/lust/lust.lua" type="shared" cache="false" />
 </meta>

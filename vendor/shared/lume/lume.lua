@@ -758,6 +758,3 @@ setmetatable(lume,  {
     return lume.public.chain(...)
   end
 })
-
-
-return lume
