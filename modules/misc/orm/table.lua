@@ -227,6 +227,7 @@ function dbTable.private:retrieveQueryResults(connection, queryString, callback,
       if imports.type(args) ~= "table" then
         args = {}
       end
+
       dbTable.private:executeCallback(callback, result, imports.unpack(args))
 
     end, connection, queryString)

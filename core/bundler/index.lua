@@ -20,6 +20,8 @@ bundler.private.modules = {
   ["lust"] = {module = "lust", namespace = "dreamcore.lust", path = "modules/tests/lust.lua", endpoints = {"lust"}},
   ["database"] = {module = "dbfy", namespace = "dreamcore.database", path = "modules/misc/orm/index.lua", endpoints = {"database"}},
   ["cron"] = {module = "cron", namespace = "dreamcore.cron", path = "modules/misc/cron.lua", endpoints = {"cron"}},
+  ["lume"] = {module = "lovelume", namespace = "dreamcore.lume", path = "modules/collections/lume.lua", endpoints = {"lume"}},
+  ["socket"] = {module = "socketio", namespace = "dreamcore.socket", path = "modules/misc/socket/socket.lua", endpoints = {"socket"}},
 }
 
 
