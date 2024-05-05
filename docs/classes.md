@@ -112,5 +112,4 @@ helloworld.public:say() -- sainda: 'dreamcore is amazing'
 
 ***
 
-<center><span style='color: gray;'>Documentando por @prxyu</span></center>
-<center><span style='color: gray;'>DreamCore</span></center>
+DreamCore
