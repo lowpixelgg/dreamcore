@@ -70,7 +70,7 @@ helloworld.public:say() -- saida: 'hello world'
 
 ## Setter's & Getter's ##
 
-Agora imagine que você deseja que a variável output seja modificável, é ai que entra os (Setter's & Getter's), função chamadas para quando precisamos mudar ou desejamos pegar o valor de uma variavel privada.
+Agora imagine que você deseja que a variável output seja modificável, é ai que entra o (Setter's & Getter's), função chamadas para quando precisamos mudar ou desejamos pegar o valor de uma variavel privada.
 
 Neste exemplo iremos criar duas funções publicas, a 'setOutput' para mudar o valor da nossa variavel e a função 'getOutput' para puxarmos o valor da variavel output.
 
@@ -107,7 +107,7 @@ end
 helloworld.public:say() -- saida: 'hello world'
 
 helloworld.public:setOutput('dreamcore is amazing') -- 
-helloworld.public:say() -- sainda: 'dreamcore is amazing'
+helloworld.public:say() -- saida: 'dreamcore is amazing'
 ```
 
 ***
