@@ -7,7 +7,7 @@ O modulo de classes do **DREAMCORE** cede um otimo suporte a
 
 ## Importando classes para o seus projeto ##
 
-Para usar o modulo de class do **DREAMCORE** é necessario o dreamcore iniciado e o modulo importado para o seu projeto.
+Para usar o modulo de class do **DREAMCORE** é necessário o dreamcore iniciado e o modulo importado para o seu projeto.
 
 Para isso usaremos o seguinte codigo:
 
@@ -70,7 +70,7 @@ helloworld.public:say() -- saida: 'hello world'
 
 ## Setter's & Getter's ##
 
-Agora imagine que você deseja que a variável output seja modificável, é ai que entra o (Setter's & Getter's), função chamadas para quando precisamos mudar ou desejamos pegar o valor de uma variavel privada.
+Agora imagine que você deseja que a variável output seja modificável, é ai que entra o (Setter's & Getter's), funções chamadas para quando precisamos mudar ou desejamos pegar o valor de uma variavel privada.
 
 Neste exemplo iremos criar duas funções publicas, a 'setOutput' para mudar o valor da nossa variavel e a função 'getOutput' para puxarmos o valor da variavel output.
 
